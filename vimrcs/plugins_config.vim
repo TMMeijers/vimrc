@@ -1,6 +1,6 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Important:
-"       This requries that you install https://github.com/amix/vimrc !
+"       This requires that you install https://github.com/amix/vimrc !
 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -59,7 +59,6 @@ let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
 " Enable all functions in all modes
 let g:user_zen_mode='a'
 
-
 """"""""""""""""""""""""""""""
 " => snipMate (beside <TAB> support <CTRL-j>)
 """"""""""""""""""""""""""""""
@@ -77,13 +76,13 @@ set grepprg=/bin/grep\ -nH
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Nerd Tree
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:NERDTreeWinPos = "right"
-let NERDTreeShowHidden=0
-let NERDTreeIgnore = ['\.pyc$', '__pycache__']
+let g:NERDTreeWinPos = "left"
+let NERDTreeShowHidden=1
+let NERDTreeIgnore = ['\.pyc$', '__pycache__', 'Session.vim']
 let g:NERDTreeWinSize=35
-map <leader>nn :NERDTreeToggle<cr>
+map <leader>nn :NERDTreeTabsToggle<cr>
 map <leader>nb :NERDTreeFromBookmark<Space>
-map <leader>nf :NERDTreeFind<cr>
+map <leader>nf :NERDTreeTabsFind<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -138,21 +137,22 @@ nnoremap <silent> <leader>z :Goyo<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Vim-go
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:go_fmt_command = "goimports"
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Syntastic (syntax checker)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:ale_linters = {
-\   'javascript': ['jshint'],
+\   'javascript': ['eslint'],
+\   'vue': ['eslint'],
 \   'python': ['flake8'],
-\   'go': ['go', 'golint', 'errcheck']
 \}
 
-nmap <silent> <leader>a <Plug>(ale_next_wrap)
+" After this is configured, :ALEFix will try and fix your JS code with ESLint.
+let g:ale_fixers = {
+\   'javascript': ['eslint'],
+\   'vue': ['eslint'],
+\}
+
+nmap <silent> <leader>an <Plug>(ale_next_wrap)
+nmap <silent> <leader>af <Plug>(ale_fix)
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
