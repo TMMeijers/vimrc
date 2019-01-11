@@ -16,6 +16,26 @@ inoremap JK <Esc>
 " Use bash profile when executing shell commands
 set shell=bash\ -l
 
+" Paste system clipboard in paste mode
+function! PasteSystemClipboard()
+  set paste
+  silent execute "normal \"*p"
+  set nopaste
+endfunction
+
+" System clipboard copy pasting
+vnoremap <C-y> "*y
+nnoremap <silent> <C-p> :call PasteSystemClipboard()<CR>
+
+" Splits
+set splitbelow
+set splitright
+
+map <leader>sk :leftabove new<CR>
+map <leader>sl :rightbelow vnew<CR>
+map <leader>sj :rightbelow new<CR>
+map <leader>sh :leftabove vnew<CR>
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " FILETYPES
@@ -38,9 +58,15 @@ let g:nerdtree_tabs_open_on_console_startup=1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:vue_disable_pre_processors=1
 
-function! OpenHomerun()
-  execute(":normal 1\<C-w>\<C-w>\<space>src\<CR>\<CR>\<space>vue\<CR>\<CR>\<space>src\<CR>\<CR>\<space>components\<CR>\<CR>\<space>job\<CR>\<CR>\<space>feature\<CR>\<CR>\<space>modal\<CR>\<CR>\<C-w>p")
+function! OpenTests()
+  execute(":normal 1\<C-w>\<C-w>gg\<space>__tests__\<CR>\<CR>\<space>components\<CR>\<CR>")
 endfunction
+
+function! OpenHomerun()
+  execute(":normal 1\<C-w>\<C-w>gg\<space>src\<CR>\<CR>\<space>vue\<CR>\<CR>\<space>src\<CR>\<CR>\<space>components\<CR>\<CR>")
+endfunction
+
+map <leader>ot :call OpenTests()<CR>
 
 map <leader>oh :call OpenHomerun()<CR>
 if (getcwd() =~ 'Homerun$')
@@ -49,3 +75,4 @@ endif
   
 map <leader>m mm
 map <leader>r 'm
+

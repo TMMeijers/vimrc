@@ -36,21 +36,20 @@ map <leader>f :MRU<CR>
 """"""""""""""""""""""""""""""
 let g:yankstack_yank_keys = ['y', 'd']
 
-nmap <c-p> <Plug>yankstack_substitute_older_paste
+nmap <c-o> <Plug>yankstack_substitute_older_paste
 nmap <c-n> <Plug>yankstack_substitute_newer_paste
 
 
 """"""""""""""""""""""""""""""
 " => CTRL-P
 """"""""""""""""""""""""""""""
+let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
 let g:ctrlp_working_path_mode = 0
 
-let g:ctrlp_map = '<c-f>'
-map <leader>j :CtrlP<cr>
-map <c-b> :CtrlPBuffer<cr>
-
 let g:ctrlp_max_height = 20
-let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
+
+let g:ctrlp_map = '<c-f>'
+map <c-b> :CtrlPBuffer<cr>
 
 
 """"""""""""""""""""""""""""""
@@ -78,7 +77,7 @@ set grepprg=/bin/grep\ -nH
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:NERDTreeWinPos = "left"
 let NERDTreeShowHidden=1
-let NERDTreeIgnore = ['\.pyc$', '__pycache__', 'Session.vim']
+let NERDTreeIgnore = ['\.pyc$', '__pycache__', 'Session.vim', '\.DS_STORE', '\.git', '__snapshots__', 'node_modules', 'vendor']
 let g:NERDTreeWinSize=35
 map <leader>nn :NERDTreeTabsToggle<cr>
 map <leader>nb :NERDTreeFromBookmark<Space>

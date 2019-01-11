@@ -64,7 +64,7 @@ cno $c e <C-\>eCurrentFileDir("e")<cr>
 cno $q <C-\>eDeleteTillSlash()<cr>
 
 " Bash like keys for the command line
-cnoremap <C-A>		<Home>
+cnoremap <C-Q>		<Home>
 cnoremap <C-E>		<End>
 cnoremap <C-K>		<C-U>
 
