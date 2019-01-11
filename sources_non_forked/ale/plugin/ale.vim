@@ -14,7 +14,7 @@ let g:loaded_ale_dont_use_this_in_other_plugins_please = 1
 
 " A flag for detecting if the required features are set.
 if has('nvim')
-    let s:has_features = has('timers')
+    let s:has_features = has('timers') && has('nvim-0.2.0')
 else
     " Check if Job and Channel functions are available, instead of the
     " features. This works better on old MacVim versions.
@@ -24,7 +24,7 @@ endif
 if !s:has_features
     " Only output a warning if editing some special files.
     if index(['', 'gitcommit'], &filetype) == -1
-        execute 'echoerr ''ALE requires NeoVim >= 0.1.5 or Vim 8 with +timers +job +channel'''
+        execute 'echoerr ''ALE requires NeoVim >= 0.2.0 or Vim 8 with +timers +job +channel'''
         execute 'echoerr ''Please update your editor appropriately.'''
     endif
 
@@ -109,6 +109,16 @@ let g:ale_set_highlights = get(g:, 'ale_set_highlights', has('syntax'))
 " This flag can be set to 0 to disable echoing when the cursor moves.
 let g:ale_echo_cursor = get(g:, 'ale_echo_cursor', 1)
 
+" This flag can be set to 1 to automatically show errors in the preview window.
+let g:ale_cursor_detail = get(g:, 'ale_cursor_detail', 0)
+
+" This flag can be set to 1 to enable virtual text when the cursor moves.
+let g:ale_virtualtext_cursor = get(g:, 'ale_virtualtext_cursor', 0)
+
+" This flag can be set to 1 to automatically close the preview window upon
+" entering Insert Mode.
+let g:ale_close_preview_on_insert = get(g:, 'ale_close_preview_on_insert', 0)
+
 " This flag can be set to 0 to disable balloon support.
 let g:ale_set_balloons = get(g:, 'ale_set_balloons', has('balloon_eval') && has('gui_running'))
 
@@ -125,6 +135,9 @@ let g:ale_history_log_output = get(g:, 'ale_history_log_output', 1)
 
 " Enable automatic completion with LSP servers and tsserver
 let g:ale_completion_enabled = get(g:, 'ale_completion_enabled', 0)
+
+" Enable automatic detection of pipenv for Python linters.
+let g:ale_python_auto_pipenv = get(g:, 'ale_python_auto_pipenv', 0)
 
 if g:ale_set_balloons
     call ale#balloon#Enable()
@@ -175,14 +188,23 @@ command! -bar ALEFixSuggest :call ale#fix#registry#Suggest(&filetype)
 
 " Go to definition for tsserver and LSP
 command! -bar ALEGoToDefinition :call ale#definition#GoTo({})
-command! -bar ALEGoToDefinitionInTab :call ale#definition#GoTo({'open_in_tab': 1})
+command! -bar ALEGoToDefinitionInTab :call ale#definition#GoTo({'open_in': 'tab'})
+command! -bar ALEGoToDefinitionInSplit :call ale#definition#GoTo({'open_in': 'horizontal-split'})
+command! -bar ALEGoToDefinitionInVSplit :call ale#definition#GoTo({'open_in': 'vertical-split'})
 
 " Find references for tsserver and LSP
 command! -bar ALEFindReferences :call ale#references#Find()
 
-" Get information for the cursor.
-command! -bar ALEHover :call ale#hover#Show(bufnr(''), getcurpos()[1],
-                                            \ getcurpos()[2], {})
+" Show summary information for the cursor.
+command! -bar ALEHover :call ale#hover#ShowAtCursor()
+
+" Show documentation for the cursor.
+command! -bar ALEDocumentation :call ale#hover#ShowDocumentationAtCursor()
+
+" Search for appearances of a symbol, such as a type name or function name.
+command! -nargs=1 ALESymbolSearch :call ale#symbol#Search(<q-args>)
+
+command! -bar ALEComplete :call ale#completion#AlwaysGetCompletions()
 
 " <Plug> mappings for commands
 nnoremap <silent> <Plug>(ale_previous) :ALEPrevious<Return>
@@ -204,8 +226,12 @@ nnoremap <silent> <Plug>(ale_detail) :ALEDetail<Return>
 nnoremap <silent> <Plug>(ale_fix) :ALEFix<Return>
 nnoremap <silent> <Plug>(ale_go_to_definition) :ALEGoToDefinition<Return>
 nnoremap <silent> <Plug>(ale_go_to_definition_in_tab) :ALEGoToDefinitionInTab<Return>
+nnoremap <silent> <Plug>(ale_go_to_definition_in_split) :ALEGoToDefinitionInSplit<Return>
+nnoremap <silent> <Plug>(ale_go_to_definition_in_vsplit) :ALEGoToDefinitionInVSplit<Return>
 nnoremap <silent> <Plug>(ale_find_references) :ALEFindReferences<Return>
 nnoremap <silent> <Plug>(ale_hover) :ALEHover<Return>
+nnoremap <silent> <Plug>(ale_documentation) :ALEDocumentation<Return>
+inoremap <silent> <Plug>(ale_complete) <C-\><C-O>:ALEComplete<Return>
 
 " Set up autocmd groups now.
 call ale#events#Init()
@@ -217,4 +243,8 @@ augroup ALECleanupGroup
     " Clean up buffers automatically when they are unloaded.
     autocmd BufDelete * if exists('*ale#engine#Cleanup') | call ale#engine#Cleanup(str2nr(expand('<abuf>'))) | endif
     autocmd QuitPre * call ale#events#QuitEvent(str2nr(expand('<abuf>')))
+
+    if exists('##VimSuspend')
+      autocmd VimSuspend * if exists('*ale#engine#CleanupEveryBuffer') | call ale#engine#CleanupEveryBuffer() | endif
+    endif
 augroup END

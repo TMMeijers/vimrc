@@ -4,12 +4,6 @@
 call ale#Set('elm_make_executable', 'elm')
 call ale#Set('elm_make_use_global', get(g:, 'ale_use_global_executables', 0))
 
-function! ale_linters#elm#make#GetExecutable(buffer) abort
-    return ale#node#FindExecutable(a:buffer, 'elm_make', [
-    \   'node_modules/.bin/elm',
-    \])
-endfunction
-
 function! ale_linters#elm#make#Handle(buffer, lines) abort
     let l:output = []
     let l:unparsed_lines = []
@@ -143,21 +137,63 @@ function! ale_linters#elm#make#ParseMessageItem(item) abort
     endif
 endfunction
 
-" Return the command to execute the linter in the projects directory.
-" If it doesn't, then this will fail when imports are needed.
-function! ale_linters#elm#make#GetCommand(buffer) abort
+function! ale_linters#elm#make#GetPackageFile(buffer) abort
     let l:elm_json = ale#path#FindNearestFile(a:buffer, 'elm.json')
-    let l:elm_exe = ale_linters#elm#make#GetExecutable(a:buffer)
 
     if empty(l:elm_json)
         " Fallback to Elm 0.18
         let l:elm_json = ale#path#FindNearestFile(a:buffer, 'elm-package.json')
     endif
 
+    return l:elm_json
+endfunction
+
+function! ale_linters#elm#make#IsVersionGte19(buffer) abort
+    let l:elm_json = ale_linters#elm#make#GetPackageFile(a:buffer)
+
+    if l:elm_json =~# '-package'
+        return 0
+    else
+        return 1
+    endif
+endfunction
+
+function! ale_linters#elm#make#GetRootDir(buffer) abort
+    let l:elm_json = ale_linters#elm#make#GetPackageFile(a:buffer)
+
     if empty(l:elm_json)
+        return ''
+    else
+        return fnamemodify(l:elm_json, ':p:h')
+    endif
+endfunction
+
+function! ale_linters#elm#make#IsTest(buffer) abort
+    let l:root_dir = ale_linters#elm#make#GetRootDir(a:buffer)
+
+    if empty(l:root_dir)
+        return 0
+    endif
+
+    let l:tests_dir = join([l:root_dir, 'tests', ''], has('win32') ? '\' : '/')
+
+    let l:buffer_path = fnamemodify(bufname(a:buffer), ':p')
+
+    if stridx(l:buffer_path, l:tests_dir) == 0
+        return 1
+    else
+        return 0
+    endif
+endfunction
+
+" Return the command to execute the linter in the projects directory.
+" If it doesn't, then this will fail when imports are needed.
+function! ale_linters#elm#make#GetCommand(buffer) abort
+    let l:root_dir = ale_linters#elm#make#GetRootDir(a:buffer)
+
+    if empty(l:root_dir)
         let l:dir_set_cmd = ''
     else
-        let l:root_dir = fnamemodify(l:elm_json, ':p:h')
         let l:dir_set_cmd = 'cd ' . ale#Escape(l:root_dir) . ' && '
     endif
 
@@ -165,18 +201,28 @@ function! ale_linters#elm#make#GetCommand(buffer) abort
     " a sort of flag to tell the compiler not to generate an output file,
     " which is why this is hard coded here.
     " Source: https://github.com/elm-lang/elm-compiler/blob/19d5a769b30ec0b2fc4475985abb4cd94cd1d6c3/builder/src/Generate/Output.hs#L253
-    let l:elm_cmd = ale#Escape(l:elm_exe)
-    \   . ' make'
-    \   . ' --report=json'
-    \   . ' --output=/dev/null'
+    return l:dir_set_cmd . '%e make --report=json --output=/dev/null %t'
+endfunction
 
-    return l:dir_set_cmd . ' ' . l:elm_cmd . ' %t'
+function! ale_linters#elm#make#GetExecutable(buffer) abort
+    let l:is_test = ale_linters#elm#make#IsTest(a:buffer)
+    let l:is_v19 = ale_linters#elm#make#IsVersionGte19(a:buffer)
+
+    if l:is_test && l:is_v19
+        return ale#node#FindExecutable(
+\           a:buffer,
+\           'elm_make',
+\           ['node_modules/.bin/elm-test', 'node_modules/.bin/elm']
+\       )
+    else
+        return ale#node#FindExecutable(a:buffer, 'elm_make', ['node_modules/.bin/elm'])
+    endif
 endfunction
 
 call ale#linter#Define('elm', {
-\    'name': 'make',
-\    'executable_callback': 'ale_linters#elm#make#GetExecutable',
-\    'output_stream': 'both',
-\    'command_callback': 'ale_linters#elm#make#GetCommand',
-\    'callback': 'ale_linters#elm#make#Handle'
+\   'name': 'make',
+\   'executable_callback': 'ale_linters#elm#make#GetExecutable',
+\   'output_stream': 'both',
+\   'command_callback': 'ale_linters#elm#make#GetCommand',
+\   'callback': 'ale_linters#elm#make#Handle'
 \})
