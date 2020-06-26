@@ -21,14 +21,14 @@ call pathogen#helptags()
 let g:bufExplorerDefaultHelp=0
 let g:bufExplorerShowRelativePath=1
 let g:bufExplorerFindActive=1
-let g:bufExplorerSortBy='name'
+let g:bufExplorerSortBy='mru'
 map <leader>o :BufExplorer<cr>
 
 
 """"""""""""""""""""""""""""""
 " => MRU plugin
 """"""""""""""""""""""""""""""
-let MRU_Max_Entries = 400
+let MRU_Max_Entries = 40
 map <leader>f :MRU<CR>
 
 
@@ -56,15 +56,11 @@ map <leader>b :CtrlPBuffer<cr>
 " Quickly find and open a recently opened file
 map <leader>f :CtrlPMRU<CR>
 
+let g:ctrlp_clear_cache_on_exit = 0
+
 
 """"""""""""""""""""""""""""""
-" => ZenCoding
-""""""""""""""""""""""""""""""
-" Enable all functions in all modes
-let g:user_zen_mode='a'
-
-""""""""""""""""""""""""""""""
-" => snipMate (beside <TAB> support <CTRL-j>)
+" => UltiSnips
 """"""""""""""""""""""""""""""
 ino <C-j> <C-r>=snipMate#TriggerSnippet()<cr>
 snor <C-j> <esc>i<right><C-r>=snipMate#TriggerSnippet()<cr>
@@ -86,7 +82,7 @@ let NERDTreeIgnore = ['\.pyc$', '__pycache__', 'Session.vim', '\.DS_STORE', '\.g
 let g:NERDTreeWinSize=35
 map <leader>nn :NERDTreeTabsToggle<cr>
 map <leader>nb :NERDTreeFromBookmark<Space>
-map <leader>nf :NERDTreeTabsFind<cr>
+map <leader>nf :NERDTreeFind<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -153,33 +149,37 @@ let g:go_fmt_command = "goimports"
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Ale (syntax checker and linter)
+" => ALE (Asynchronous Lint Engine)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:ale_linters = {
 \   'javascript': ['eslint'],
 \   'vue': ['eslint'],
-\   'python': ['flake8'],
+\   'php': ['php', 'psalm'],
 \}
 
-" After this is configured, :ALEFix will try and fix your JS code with ESLint.
 let g:ale_fixers = {
 \   'javascript': ['eslint'],
 \   'vue': ['eslint'],
+\   'php': ['php_cs_fixer'],
 \}
 
 nmap <silent> <leader>an <Plug>(ale_next_wrap)
 nmap <silent> <leader>af <Plug>(ale_fix)
 
-" Disabling highlighting
-let g:ale_set_highlights = 0
+let g:ale_set_highlights = 1
+let g:ale_sign_column_always = 1
 
 " Only run linting when saving the file
 let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_enter = 0
+let g:ale_lint_on_insert_leave = 1
+let g:ale_lint_on_enter = 1
+
+" Fix on saving
+let g:ale_fix_on_save = 1
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Git gutter (Git diff)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:gitgutter_enabled=0
-nnoremap <silent> <leader>d :GitGutterToggle<cr>
+nnoremap <silent> <leader>vc :GitGutterToggle<cr>

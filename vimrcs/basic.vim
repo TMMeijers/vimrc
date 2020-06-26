@@ -123,7 +123,6 @@ if has("gui_macvim")
     autocmd GUIEnter * set vb t_vb=
 endif
 
-
 " Add a bit extra margin to the left
 set foldcolumn=1
 
@@ -140,7 +139,7 @@ if $COLORTERM == 'gnome-terminal'
 endif
 
 try
-    colorscheme desert
+    " colorscheme desert
 catch
 endtry
 
@@ -193,14 +192,15 @@ set wrap "Wrap lines
 """"""""""""""""""""""""""""""
 " Visual mode pressing * or # searches for the current selection
 " Super useful! From an idea by Michael Naumann
-vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
-vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
+vnoremap <silent> <space> :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
+vnoremap <silent> <c-f> :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Moving around, tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
+
 map <space> /
 map <C-space> ?
 
@@ -244,7 +244,7 @@ map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Specify the behavior when switching between buffers 
 try
-  set switchbuf=useopen,usetab,newtab
+  set switchbuf=useopen,usetab
   set stal=2
 catch
 endtry
@@ -293,7 +293,7 @@ fun! CleanExtraSpaces()
 endfun
 
 if has("autocmd")
-    autocmd BufWritePre *.txt,*.js,*.py,,*.sh,*.md,*.vue,*.html,*.css :call CleanExtraSpaces()
+    autocmd BufWritePre *.txt,*.js,*.py,*.sh,*.md,*.vue,*.html,*.css,*.php :call CleanExtraSpaces()
 endif
 
 
