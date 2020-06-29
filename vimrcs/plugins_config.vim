@@ -136,10 +136,20 @@ let g:lightline = {
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Vimroom
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:goyo_width=100
+let g:goyo_width=120
 let g:goyo_margin_top = 2
 let g:goyo_margin_bottom = 2
-nnoremap <silent> <leader>z :Goyo<cr>
+
+" @TODO - Try to close nerdtree before opening goyo
+" function! MyGoyo()
+"   echo "my goyo"
+"   if g:NERDTree.IsOpen()
+"     silent g:NERDTreeTabsToggle()
+"   endif
+" endfunction
+" autocmd! user GoyoEnter nested call <SID>goyo_enter()
+
+nnoremap <silent> <leader>z :call Goyo()<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -168,6 +178,8 @@ nmap <silent> <leader>af <Plug>(ale_fix)
 
 let g:ale_set_highlights = 1
 let g:ale_sign_column_always = 1
+" Somehow signcolumn background is green.. Just clear it as a workaround
+autocmd VimEnter * highlight clear SignColumn 
 
 " Only run linting when saving the file
 let g:ale_lint_on_text_changed = 'never'
