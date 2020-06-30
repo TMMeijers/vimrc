@@ -78,7 +78,7 @@ set grepprg=/bin/grep\ -nH
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:NERDTreeWinPos = "left"
 let NERDTreeShowHidden=1
-let NERDTreeIgnore = ['\.pyc$', '__pycache__', 'Session.vim', '\.DS_STORE', '\.git', '__snapshots__', 'node_modules', 'vendor']
+let NERDTreeIgnore = ['\.pyc$', '__pycache__', 'Session.vim', '\.DS_STORE', '\.git', 'node_modules', 'vendor']
 let g:NERDTreeWinSize=35
 map <leader>nn :NERDTreeTabsToggle<cr>
 map <leader>nb :NERDTreeFromBookmark<Space>
