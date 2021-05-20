@@ -93,3 +93,9 @@ function! ObsessIfNoSession()
   endif
 endfunction
 autocmd VimEnter * call ObsessIfNoSession()
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Vim Blade
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Fix blade auto-indent
+autocmd BufNewFile,BufRead *.blade.php set ft=html | set ft=phtml | set ft=blade 
