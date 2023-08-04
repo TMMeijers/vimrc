@@ -36,7 +36,7 @@ nmap <C-n> <Plug>yankstack_substitute_newer_paste
 """"""""""""""""""""""""""""""
 " => CTRL-P
 """"""""""""""""""""""""""""""
-let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
+let g:ctrlp_user_command = 'ag %s -l --path-to-ignore ~/.ignore --nocolor --hidden -g ""'
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_max_height = 20
 
@@ -163,24 +163,38 @@ let g:ale_linters = {
 let g:ale_fixers = {
 \   'javascript': ['eslint'],
 \   'vue': ['eslint'],
-\   'php': ['php_cs_fixer'],
+\   'php': ['php_cs_fixer', 'phpcbf'],
 \}
 
 nmap <silent> <leader>an <Plug>(ale_next_wrap)
 nmap <silent> <leader>af <Plug>(ale_fix)
+nmap <silent> <leader>ar :ALEReset<cr>
 
 let g:ale_set_highlights = 1
+let g:ale_exclude_highlights = [
+      \ 'IntegrationTester', 
+      \ 'ApiTester', 
+      \ 'CommandsTester', 
+      \ 'UnitTester', 
+      \ 'is not defined in constructor',
+      \ 'Instance property Mockery\\Mock::.*is not defined',
+      \ ]
+
 let g:ale_sign_column_always = 1
 " Somehow signcolumn background is green.. Just clear it as a workaround
 autocmd VimEnter * highlight clear SignColumn 
 
 " Only run linting when saving the file
-let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_insert_leave = 1
 let g:ale_lint_on_enter = 1
+let g:ale_lint_on_save = 1
 
 " Fix on saving
 let g:ale_fix_on_save = 1
+
+let g:ale_php_psalm_options="--config=psalm.xml"
+let g:ale_php_cs_fixer_options="--config .php-cs-fixer.php"
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
