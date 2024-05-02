@@ -93,9 +93,9 @@ autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 " => Ack searching and cope displaying
 "    requires ack.vim - it's much better than vimgrep/grep
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Use the the_silver_searcher if possible (much faster than Ack)
-if executable('ag')
-  let g:ackprg = 'ag --path-to-ignore ~/.ignore'
+" Use ripgrep if possible (much faster than Ack)
+if executable('rg')
+  let g:ackprg = 'rg --vimgrep --smart-case'
 endif
 
 " When you press gv you Ack after the selected text

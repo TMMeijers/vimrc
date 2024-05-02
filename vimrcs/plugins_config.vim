@@ -36,9 +36,11 @@ nmap <C-n> <Plug>yankstack_substitute_newer_paste
 """"""""""""""""""""""""""""""
 " => CTRL-P
 """"""""""""""""""""""""""""""
-let g:ctrlp_user_command = 'ag %s -l --path-to-ignore ~/.ignore --nocolor --hidden -g ""'
-let g:ctrlp_working_path_mode = 0
+let g:ctrlp_user_command = 'rg %s --smart-case --hidden --files'
 let g:ctrlp_max_height = 20
+let g:ctrlp_use_caching = 0
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_switch_buffer = 'et'
 
 " Quickly find and open a file in the current working directory
 let g:ctrlp_map = '<C-f>'
@@ -163,7 +165,7 @@ let g:ale_linters = {
 let g:ale_fixers = {
 \   'javascript': ['eslint'],
 \   'vue': ['eslint'],
-\   'php': ['php_cs_fixer', 'phpcbf'],
+\   'php': ['php_cs_fixer'],
 \}
 
 nmap <silent> <leader>an <Plug>(ale_next_wrap)
@@ -171,30 +173,28 @@ nmap <silent> <leader>af <Plug>(ale_fix)
 nmap <silent> <leader>ar :ALEReset<cr>
 
 let g:ale_set_highlights = 1
-let g:ale_exclude_highlights = [
-      \ 'IntegrationTester', 
-      \ 'ApiTester', 
-      \ 'CommandsTester', 
-      \ 'UnitTester', 
-      \ 'is not defined in constructor',
-      \ 'Instance property Mockery\\Mock::.*is not defined',
-      \ ]
 
 let g:ale_sign_column_always = 1
 " Somehow signcolumn background is green.. Just clear it as a workaround
 autocmd VimEnter * highlight clear SignColumn 
 
-" Only run linting when saving the file
+" When to lint
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_insert_leave = 1
 let g:ale_lint_on_enter = 1
 let g:ale_lint_on_save = 1
 
+let g:ale_set_highlights = 1
+let g:ale_set_signs = 1
+let g:ale_echo_cursor = 1
+let g:ale_virtualtext_cursor = 0
+let g:ale_cursor_detail = 0
+
 " Fix on saving
 let g:ale_fix_on_save = 1
 
-let g:ale_php_psalm_options="--config=psalm.xml"
-let g:ale_php_cs_fixer_options="--config .php-cs-fixer.php"
+let g:ale_php_psalm_options = " --config=psalm.xml"
+let g:ale_php_cs_fixer_options = " --config .php-cs-fixer.php"
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -202,3 +202,10 @@ let g:ale_php_cs_fixer_options="--config .php-cs-fixer.php"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:gitgutter_enabled=0
 nnoremap <silent> <leader>vc :GitGutterToggle<cr>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Gutentags (Automatic CTag management)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+let g:gutentags_file_list_command = 'rg --files'
+let g:gutentags_ctags_exclude = ''
